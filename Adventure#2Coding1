@@ -1,0 +1,82 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+// Global variables
+int health = 100;         // Player's health
+int totalTreasure = 0;    // Total treasure collected
+
+// Function to tell the story
+void Story() {
+    cout << "You are an adventurer seeking treasure. Dangerous enemies await you on your journey.\n";
+    cout << "Do you have the courage to continue? Let's find out...\n";
+}
+
+// Function to ask yes/no questions
+bool AskYesNo(string question) {
+    char response;
+    cout << question << " (y/n): ";
+    cin >> response;
+    return (response == 'y' || response == 'Y');
+}
+
+// Function to simulate rolling a die
+int RollDie(int sides = 6) {
+    return rand() % sides + 1; // Random number between 1 and 'sides'
+}
+
+// Function to display the ending
+void Ending() {
+    if (health <= 0) {
+        cout << "You are dead. Game Over.\n";
+    } else {
+        cout << "You decided to stop adventuring.\n";
+        cout << "Final health: " << health << endl;
+        cout << "Total treasure collected: " << totalTreasure << endl;
+    }
+}
+
+// Function to simulate the adventure
+bool Adventure() {
+    // Roll dice for attack, block, and treasure
+    int enemyAttack = RollDie();
+    int playerBlock = RollDie();
+    int treasure = RollDie(10); // Treasure has a higher range, 1-10
+
+    cout << "Enemy attack: " << enemyAttack << ", Your block: " << playerBlock << endl;
+
+    if (playerBlock >= enemyAttack) {
+        cout << "You successfully block the attack and find " << treasure << " treasure!\n";
+        totalTreasure += treasure;
+    } else {
+        health -= (enemyAttack - playerBlock);  // Subtract damage
+        if (health < 0) health = 0;  // Ensure health doesn't go negative
+        cout << "You failed to block the attack! You lose " << (enemyAttack - playerBlock) << " health.\n";
+    }
+
+    cout << "Current health: " << health << endl;
+    cout << "Total treasure: " << totalTreasure << endl;
+
+    return health > 0;  // Continue adventure if health is greater than 0
+}
+
+// Main function
+int main() {
+    srand(time(0)); // Seed the random number generator
+
+    Story();
+
+    while (health > 0) {
+        if (AskYesNo("Would you like to go on an adventure?")) {
+            if (!Adventure()) break;  // If health drops to 0 or below, break the loop
+        } else {
+            break;  // If the player doesn't want to continue, break the loop
+        }
+    }
+
+    Ending();
+
+    return 0;
+}

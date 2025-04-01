@@ -1,0 +1,100 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+// Global variables
+int health = 25;    
+     
+int totalTreasure = 0;    
+
+// Tell the story
+void Story() {
+    cout << "You are an adventurer seeking treasure. Dangerous enemies await you on your journey.\n";
+}
+
+// Aask yes/no or if fuck up 
+bool AskYesNo(string question) {
+    char response;
+    while (true) {
+        cout << question << " (y/n): ";
+        cin >> response;
+        if (response == 'y' || response == 'Y') {
+            return true;
+        } else if (response == 'n' || response == 'N') {
+            return false;
+        } else {
+            cout << "Unknown prompt. Please enter 'y' for yes or 'n' for no.\n";
+        }
+    }
+}
+
+// Dice roll
+int RollDie(int sides = 6) {
+    return rand() % sides + 1; 
+}
+
+// Quit
+// Die
+void Ending() {
+    if (health <= 0) {
+        cout << "You are dead. Game Over.\n";
+        // Retirement 
+    } else {
+        cout << "You decided to quit your adventure.\n";
+        cout << "Final health: " << health << endl;
+        cout << "Total treasure collected: " << totalTreasure << endl;
+    }
+}
+
+// Questing
+bool Adventure() {
+    // Tell player they gonna die
+    if (health <= 5) {
+        cout << "Your health is really low. You might want to stop adventuring!\n";
+    }
+
+    // Roll dice for attack, block, and treasure
+    int enemyAttack = RollDie();
+    int playerBlock = RollDie();
+    int treasure = RollDie(10); 
+
+    // Attacka dn Block
+
+    cout << "Enemy attack: " << enemyAttack << ", Your block: " << playerBlock << endl;
+
+    if (playerBlock >= enemyAttack) {
+        cout << "You successfully block the attack and find " << treasure << " treasure!\n";
+        totalTreasure += treasure;
+    } else {
+        health -= (enemyAttack - playerBlock);  
+        if (health < 0) health = 0;  
+        cout << "You failed to block the attack! You lose " << (enemyAttack - playerBlock) << " health.\n";
+    }
+
+    cout << "Current health: " << health << endl;
+    cout << "Total treasure: " << totalTreasure << endl;
+
+    return health > 0; 
+}
+
+// Set the main
+int main() {
+    srand(time(0)); // start number genorators 
+
+    Story();
+
+    while (health > 0) {
+        if (AskYesNo("Would you like to go on an adventure?")) {
+            if (!Adventure()) break;  
+        } else {
+            break;  
+        }
+    }
+
+    Ending();
+
+    return 0;
+}
